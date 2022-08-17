@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import PostCard from './post-card.component'
-import { getPosts } from '../../../services/firebaseApi'
+import { db } from 'config/firebase-config'
+import { getDocs , collection } from 'firebase/firestore'
 import { Container } from 'react-bootstrap'
 
-function PostsList() {
-  const [posts, setPosts] = useState([]);
 
-  const loadPosts = async () => {
-    const posts = await getPosts();
-    setPosts(posts)
-  }
+function PostsList() {
+  const [postsList, setPostsList] = useState([]);
+  const postsCollectionRef = collection(db, "posts");
+
+  const getPosts = async () => {
+    const data = await getDocs(postsCollectionRef)
+    setPostsList(data.docs.map((doc) => ({...doc.data(), id: doc.id })))
+  };
+
   useEffect(() => {
-    loadPosts();
-  }, []);
+    getPosts()
+  });
 
   return (
-    <Container>
-      {posts.length && posts.map((item) => <p>{item.title}</p>)}
-    </Container>
+      <>
+      {postsList.map((post) => {
+        return <PostCard post={post}/>
+      } )}
+      </>
   )
 }
 

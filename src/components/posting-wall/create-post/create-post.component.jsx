@@ -14,29 +14,29 @@ function CreatePostForm() {
   const [loading,setLoading] = useState()
   const navigate = useNavigate()
   const postRef = collection(db, "posts")
+
+
+  const CreatePost = async () => {
+    setLoading(true)
+    const postData = {
+      title: titleRef.current.value,
+      content: contentRef.current.value,
+      author: currentUser.diplayName ? currentUser.diplayName : currentUser.email.slice(0, currentUser.email.indexOf('@')),
+      author_id: currentUser.uid,
+      likes: 0,
+      date: new Date()
+    };
+    setError('')
+    await addDoc(postRef, postData)
+      .then(()=> {
+        setLoading(false)
+        navigate('/')
+      }).catch((error) => setError(error))
+  }
   
   async function handleSubmit(e){
     e.preventDefault()
-    const username = currentUser.displayName ? currentUser.displayName : currentUser.email.slice(0,currentUser.email.indexOf("@")) 
-    try {
-      const postData = {
-        title: titleRef.current.value,
-        content: contentRef.current.value,
-        author: username,
-        author_id: currentUser.id,
-        likes: 0,
-        date: new Date()
-      };
-      setError('')
-      setLoading(true)
-      await addDoc(postRef,postData)
-      .then(()=> {
-        navigate('/')
-      }).catch((error) => console.log(error))
-    } catch{
-      setError('failed to post')
-    }
-    setLoading(false)
+    CreatePost()
   }
 
   return (

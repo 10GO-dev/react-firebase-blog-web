@@ -14,16 +14,12 @@ function LoginForm() {
 
   async function handleSubmit(e){
     e.preventDefault()
-    try {
-      setError('')
-      setLoading(true)
-      await signin(emailRef.current.value, passwordRef.current.value)
+    setError('')
+    setLoading(true)
+    await signin(emailRef.current.value, passwordRef.current.value)
       .then(()=> {
         navigate('/')
-      }).catch((error) => console.log(error))
-    } catch {
-      setError('Failed to login')
-    }
+      }).catch((error) => setError(error))
     setLoading(false)
   }
 
